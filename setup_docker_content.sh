@@ -39,11 +39,12 @@ setup_content() {
   cd ${TMPDIR}
   echo "Extracting raspbian zip"
   unzip ${RASPBIAN_ZIP}
-  RASPBIAN_IMG=$(find . -type f -iname "*raspbian*.img" |head -n1)
+  RASPBIAN_IMG=$(find . -type f -iname "*raspios*.img" |head -n1)
 
   echo "Mounting raspbian partitions (uses 'sudo'!)"
   LOOP=$(sudo losetup --show -fP ${RASPBIAN_IMG})
   mkdir -p {raspbian_root,raspbian_boot}
+  sudo kpartx -a -v ${RASPBIAN_IMG}
   sudo mount ${LOOP}p1 raspbian_boot/
   sudo mount ${LOOP}p2 raspbian_root/
 
@@ -61,7 +62,7 @@ configure_boot() {
   echo "dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/nfs nfsroot=${NFS_IP}:/${RASPBIAN_HOSTNAME}/,vers=4.1,proto=tcp,port=2049 rw ip=dhcp elevator=deadline rootwait plymouth.ignore-serial-consoles" > ${RASPBIAN_BOOT_DIR}/cmdline.txt
 
   echo "Enable SSH on boot"
-  touch ${RASPBIAN_BOOT_DIR}/ssh
+  sudo touch ${RASPBIAN_BOOT_DIR}/ssh
 }
 
 configure_raspbian() {
@@ -74,7 +75,7 @@ configure_raspbian() {
   sed -i "/PARTUUID/d" ${RASPBIAN_ROOT_DIR}/etc/fstab
 
   echo "Add /boot mount to fstab"
-  echo "${NFS_IP}:tftp/${RASPBIAN_SERIAL} /boot nfs4 defaults,nofail,noatime 0 2" >> ${RASPBIAN_ROOT_DIR}/etc/fstab
+  echo "${NFS_IP}:tftp/${RASPBIAN_SERIAL} /boot nfs defaults,vers=4.1,proto=tcp 0 0" | sudo tee -a ${RASPBIAN_ROOT_DIR}/etc/fstab
 }
 
 setup_content
