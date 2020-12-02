@@ -39,12 +39,12 @@ setup_content() {
   cd ${TMPDIR}
   echo "Extracting raspbian zip"
   unzip ${RASPBIAN_ZIP}
-  RASPBIAN_IMG=$(find . -type f -iname "*raspios*.img" |head -n1)
+  RASPBIAN_IMG=$(find . -type f -iname "*network_boot*.img" |head -n1)
+  echo ${RASPBIAN_IMG}
 
   echo "Mounting raspbian partitions (uses 'sudo'!)"
   LOOP=$(sudo losetup --show -fP ${RASPBIAN_IMG})
   mkdir -p {raspbian_root,raspbian_boot}
-  sudo kpartx -a -v ${RASPBIAN_IMG}
   sudo mount ${LOOP}p1 raspbian_boot/
   sudo mount ${LOOP}p2 raspbian_root/
 
@@ -61,8 +61,6 @@ configure_boot() {
   echo "Setup cmdline.txt for NFS4 boot"
   echo "dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/nfs nfsroot=${NFS_IP}:/${RASPBIAN_HOSTNAME}/,vers=4.1,proto=tcp,port=2049 rw ip=dhcp elevator=deadline rootwait plymouth.ignore-serial-consoles" > ${RASPBIAN_BOOT_DIR}/cmdline.txt
 
-  echo "Enable SSH on boot"
-  sudo touch ${RASPBIAN_BOOT_DIR}/ssh
 }
 
 configure_raspbian() {
