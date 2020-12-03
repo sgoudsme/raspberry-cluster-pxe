@@ -39,8 +39,9 @@ setup_content() {
   cd ${TMPDIR}
   echo "Extracting raspbian zip"
   unzip ${RASPBIAN_ZIP}
-  #RASPBIAN_IMG=$(find . -type f -iname "*network_boot*.img" |head -n1)
-  RASPBIAN_IMG=$(basename $RASPBIAN_ZIP)
+  #RASPBIAN_IMG=$(find . -type f -iname "*network_boot_small*.img" |head -n1)
+  #RASPBIAN_IMG=$(basename $RASPBIAN_ZIP)
+  RASPBIAN_IMG="$($RASPBIAN_ZIP%.*).img"
   echo ${RASPBIAN_IMG}
 
   echo "Mounting raspbian partitions (uses 'sudo'!)"
