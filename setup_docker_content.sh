@@ -26,8 +26,8 @@ cleanup() {
     sudo umount ${LOOP}p1
     sudo umount ${LOOP}p2
   fi
-  
-  sudo rm -rf ${TMPDIR}
+  echo ${TMPDIR}
+  #sudo rm -rf ${TMPDIR}
 }
 
 echo "Creating tempdir"
@@ -39,8 +39,10 @@ setup_content() {
   cd ${TMPDIR}
   echo "Extracting raspbian zip"
   unzip ${RASPBIAN_ZIP}
-  #RASPBIAN_IMG=$(find . -type f -iname "*network_boot*.img" |head -n1)
-  RASPBIAN_IMG=$(basename $RASPBIAN_ZIP)
+  #RASPBIAN_IMG=$(find . -type f -iname "*network_boot_small*.img" |head -n1)
+  #RASPBIAN_IMG=$(basename $RASPBIAN_ZIP)
+  RASPBIAN_IMG="${RASPBIAN_ZIP%.*}"
+  RASPBIAN_IMG="${RASPBIAN_IMG##*/}"
   echo ${RASPBIAN_IMG}
 
   echo "Mounting raspbian partitions (uses 'sudo'!)"
