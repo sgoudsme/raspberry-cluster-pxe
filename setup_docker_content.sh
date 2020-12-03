@@ -27,7 +27,7 @@ cleanup() {
     sudo umount ${LOOP}p2
   fi
   echo ${TMPDIR}
-  #sudo rm -rf ${TMPDIR}
+  sudo rm -rf ${TMPDIR}
 }
 
 echo "Creating tempdir"
